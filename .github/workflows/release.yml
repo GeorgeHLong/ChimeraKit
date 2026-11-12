@@ -1,7 +1,7 @@
 name: release
 
 # Push a tag like v0.2.0 to release. The tag must match chimerakit/__version__.
-# Tests run, the package is built once, sent to TestPyPI, and then waits for a person to approve the "pypi" environment before PyPI.
+# Tests run, the package is built once, and then it waits for a person to approve the "pypi" environment before it goes to PyPI.
 # Publishing uses PyPI trusted publishing: no PyPI password or token is stored anywhere.
 
 on:
@@ -33,26 +33,8 @@ jobs:
           name: dist
           path: dist/
 
-  testpypi:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: testpypi
-      url: https://test.pypi.org/p/chimerakit
-    permissions:
-      id-token: write
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist/
-      - uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: https://test.pypi.org/legacy/
-          skip-existing: true
-
   pypi:
-    needs: testpypi
+    needs: build
     runs-on: ubuntu-latest
     environment:
       name: pypi
